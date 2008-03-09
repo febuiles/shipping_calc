@@ -44,6 +44,19 @@ Shipping Calculator written in Ruby to get quick quotes from the major carriers 
 
 * sudo gem install shipping_calc
 
+== TEST
+
+To run the DHL tests you'll need to have a .dhl_info.yml file in your home directory with your auth info like this: 
+    ~/.dhl_info.yml
+
+    api_user: your_user
+    api_password: your_password
+    shipping_key: your_key
+    account_num: your_accnt_num
+
+This is necessary only for the tests and it'll be ignored for the actual
+usage of the the library. 
+
 == LICENSE:
 
 Copyright (c) 2008 Federico Builes

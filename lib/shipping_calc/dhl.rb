@@ -14,7 +14,6 @@ module ShippingCalc
   # Currently, only shipments made inside the US are available.
   class DHL < Base
 
-
     # Obtains an estimate quote from the DHL site. 
     # <tt>params</tt> is a hash with all the settings for the shipment. They are:
     #
@@ -33,7 +32,7 @@ module ShippingCalc
     def quote(params)
       @xml = xml = Document.new
       xml << XMLDecl.new("1.0' encoding='UTF-8")
-
+      raise ShippingCalcError.new("Missing shipping parameters") unless params.keys.length == 10
       auth(params[:api_user], params[:api_password])
       rate_estimate(params)
       request
@@ -110,7 +109,7 @@ module ShippingCalc
       detail << type << t_code
 
       weight = Element.new "Weight"
-      weight.text = weight(params[:weight])
+      weight.text = weight(params[:weight], params[:shipment_code])
       shipment << detail << weight
 
       billing = Element.new "Billing"
@@ -177,8 +176,12 @@ module ShippingCalc
       ["E", "N", "S", "G"].include?(code) ? code : "G"
     end
 
-    def weight(w)
-      (w > 0 && w <= 150) ? w.to_s : (raise ShippingCalcError.new("Invalid weight - Must be between 1 and 150 lbs."))
+    def weight(w, type)
+      if type == "L"
+        "0"
+      else
+        (w > 0 && w <= 150) ? w.to_s : (raise ShippingCalcError.new("Invalid weight - Must be between 1 and 150 lbs."))
+      end
     end
 
     def state(s)
@@ -190,6 +193,9 @@ module ShippingCalc
     end
 
     def zip_code(code)
+      if code.class != Fixnum
+        raise ShippingCalcError.new("Zip Code must be a number. Perhaps you're using a string?")
+      end
       code.to_s =~ /\d{5}/ ? code.to_s : (raise ShippingCalcError.new("Invalid zip code for recipient"))
     end
 
