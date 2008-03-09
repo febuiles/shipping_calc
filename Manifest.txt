@@ -3,5 +3,4 @@ Manifest.txt
 README.txt
 Rakefile
 lib/shipping_calc.rb
-lib/shipping_calc/base.rb
 lib/shipping_calc/dhl.rb

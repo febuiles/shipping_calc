@@ -17,7 +17,7 @@ class DHLTest < Test::Unit::TestCase
       :api_password => api_pwd,
       :shipping_key => api_key,
       :account_num => api_accnt_num,
-      :date => "2008-03-10",
+      :date => Time.now,
       :service_code => "E", # check the docs to find out what this means
       :shipment_code => "P", # check the docs to find out what this means
       :weight => 34, # weight in lbs

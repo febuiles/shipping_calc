@@ -12,7 +12,7 @@ module ShippingCalc
   # against their live platform tests. The test bed should be enough to get
   # simple calculations.
   # Currently, only shipments made inside the US are available.
-  class DHL < Base
+  class DHL
 
     # Obtains an estimate quote from the DHL site. 
     # <tt>params</tt> is a hash with all the settings for the shipment. They are:
@@ -63,8 +63,7 @@ module ShippingCalc
     # After having the auth message ready, we create the RateEstimate request.
     #     shipping_key: API shipping key, provided by DHL.
     #     account_num: Account number, provided by DHL.
-    #     date: Date for the shipping in format YYYY-MM-DD (defaults to
-    #     Time.now).
+    #     date: Date for the shipping. Must be a Ruby "Time" object.
     #     service_code: Service code defined in Rate Estimate Specification
     #     (E, N, S, G). 1030 and SAT are not supported yet. Defaults to G
     #     (ground service).
@@ -160,12 +159,16 @@ module ShippingCalc
       if result == "Shipment estimate successful."
         doc.elements["//Shipment/EstimateDetail/RateEstimate/TotalChargeEstimate"].text.to_f
       else
-        raise ShippingCalcError.new("Error calculating shipping costs: + #{result}")
+        raise ShippingCalcError.new(doc.to_s)
       end
     end
 
     def date(date)
-      date =~ /\d{4}-\d{2}-\d{2}/ ? date : Time.now.strftime("%Y-%m-%d")
+      if date.strftime("%A") == "Sunday"
+        (date + 86400).strftime("%Y-%m-%d") # DHL doesn't ship on Sundays, add 1 day.
+      else
+        date.strftime("%Y-%m-%d")
+      end
     end
 
     def shipment_code(code)
@@ -189,12 +192,12 @@ module ShippingCalc
     end
 
     def valid_state?(s)
-      US_STATES.include?(s)
+      ShippingCalc::US_STATES.include?(s)
     end
 
     def zip_code(code)
       if code.class != Fixnum
-        raise ShippingCalcError.new("Zip Code must be a number. Perhaps you're using a string?")
+        raise ShippingCalcError.new("Zip Code must be a number. Perhaps you are using a string?")
       end
       code.to_s =~ /\d{5}/ ? code.to_s : (raise ShippingCalcError.new("Invalid zip code for recipient"))
     end
