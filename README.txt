@@ -1,6 +1,7 @@
 = ShippingCalc
 
 * http://github.com/febuiles/shipping_calc/
+* mailto:federico.builes@gmail.com
 
 == DESCRIPTION:
 
@@ -11,6 +12,9 @@ Shipping Calculator written in Ruby to get quick quotes from the major carriers 
 - Current version only supports DHL.
 
 == SYNOPSIS:
+
+	require 'rubygems'
+	require 'shipping_calc'
 
 	include ShippingCalc
 
