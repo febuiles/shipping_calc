@@ -1,0 +1,6 @@
+=== 0.0.1 / 2008-03-09
+
+* Initial buggy release
+
+  * Don't try this at home!
+
