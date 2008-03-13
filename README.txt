@@ -5,7 +5,8 @@
 
 == DESCRIPTION:
 
-Shipping Calculator written in Ruby to get quick quotes from the major carriers (UPS, DHL, FedEX).
+Shipping Calculator written in Ruby to get quick quotes from the major
+carriers (UPS, DHL, FedEX, FreightQuote).
 
 == FEATURES/PROBLEMS:
 
@@ -23,7 +24,7 @@ Shipping Calculator written in Ruby to get quick quotes from the major carriers 
 	  :api_password => "your_pwd",
 	  :shipping_key => "your_key",
 	  :account_num => "your_accnt",
-	  :date => "2008-03-10",
+	  :date => Time.now, # or something...
 	  :service_code => "E", # check the docs to find out what this means
 	  :shipment_code => "P", # check the docs to find out what this means
 	  :weight => 34, # weight in lbs
