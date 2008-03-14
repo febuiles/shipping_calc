@@ -48,8 +48,8 @@ module ShippingCalc
     # :*dimensions*:: Length, width and height of the shipment, described as
     # a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
     # :*description*:: Optional - Description of the stuff that's being
-    # shipped. Defaults to "".
-    def self.quote(params)
+    # shipped. Defaults to "NODESC".
+    def quote(params)
       required_fields = [:api_email, :api_password, :to_zip, :from_zip,
                          :weight, :dimensions]
 
@@ -64,14 +64,17 @@ module ShippingCalc
         end
       end
 
-      params[:description] == params[:description] || ""
+      params[:description] ||= "NODESC"
+
       @xml = xml = Document.new
       xml << XMLDecl.new("1.0' encoding='UTF-8")
-#      rate_estimate(params)
+      rate_estimate(params)
+      request
     end
 
     private
 
+    # Creates the XML for the request.
     def rate_estimate(params)
       root = Element.new("FREIGHTQUOTE")
       root.attributes["REQUEST"] = "QUOTE"
@@ -94,26 +97,39 @@ module ShippingCalc
       dest << dest_zip
       root << dest
 
-      root << shipment_item(params[:weight], params[:dimensions])
+      root << shipment_item(params[:weight], params[:dimensions], params[:description])
+      @xml << root
     end
 
+    # Sends the request to FQ's server.
     def request
-      server = Net::HTTP.new("http://b2b.Freightquote.com")
-      path = path = "/dll/FQXMLQuoter.asp"
+      server = Net::HTTP.new("b2b.freightquote.com", 80)
+      path = path = "/dll/fqxmlquoter.asp"
       data = @xml.to_s
       headers = { "Content-Type" => "text/xml"}
       resp = server.post(path, data, headers)
       price = parse_response(resp.body)
     end
 
-    def shipment_item(weight, dimensions)
-      raise ShippingCalcError.new("Invalid weight") if !(weight > 0)
+    # Parses the server's response.
+    def parse_response(xml)
+      p xml
+    end
+
+    # Create a shipment item based on the weight, dimension and description.
+    def shipment_item(weight_, dim, desc)
+      raise ShippingCalcError.new("Invalid weight") if !(weight_ > 0)
       shipment = Element.new("SHIPMENT")
       weight = Element.new("WEIGHT")
-      weight.text = weight
+      weight.text = weight_.to_s
+      shipment << weight
+
+      description = Element.new("PRODUCTDESC")
+      description.text = desc
+      shipment << description
 
       dimensions = Element.new("DIMENSIONS")
-      d = dimensions.split("x")
+      d = dim.split("x")
       l = Element.new("LENGTH")
       w = Element.new("WIDHT")
       h = Element.new("HEIGHT")
@@ -124,11 +140,9 @@ module ShippingCalc
       dimensions << l
       dimensions << w
       dimensions << h
-
-      shipment << weight
       shipment << dimensions
+
+      shipment
     end
-
   end
-
 end
