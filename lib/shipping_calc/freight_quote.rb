@@ -29,14 +29,18 @@ module ShippingCalc
   # This API is based on version 03 of the Freight Quote's (FQ) connection test,
   # release on 2007 (and still used on 2008). When you first create the
   # account you'll receive a test account that works with your username and
-  # password. After having a stable system you should e-mail FQ asking for a
+  # password. 
+  #
+  # After having a stable system you should e-mail FQ asking for a
   # production key to the servers. If you want to test with a generic
-  # username and password you can use: "xmltest@FreightQuote.com" : "XML",
+  # username and password you can the user "xmltest@FreightQuote.com" with password "XML",
   # but this won't give you access to all the debugging info. associated with
-  # your account.
+  # your account (or so they say).
   class FreightQuote
 
-    # Obtains a shipping quote from FQ's website.
+    # Obtains some shipping quotes using freight carriers from FQ's site.
+    # The return value is a hash like {carrier_name => rate} so you can see
+    # all the available prices.
     # <tt>params</tt> is a hash with all the settings for the shipment. They
     # are:
     # 
@@ -45,10 +49,8 @@ module ShippingCalc
     # :*from_zip*:: Sender's zip code.
     # :*to_zip*:: Recipient's zip code.
     # :*weight*:: Total weight of the order in lbs.
-    # :*dimensions*:: Length, width and height of the shipment, described as
-    # a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
-    # :*description*:: Optional - Description of the stuff that's being
-    # shipped. Defaults to "NODESC".
+    # :*dimensions*:: Length, width and height of the shipment, described as a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
+    # :*description*:: Optional - Description of the stuff that's being shipped. Defaults to "NODESC".
     def quote(params)
       required_fields = [:api_email, :api_password, :to_zip, :from_zip,
                          :weight, :dimensions]
@@ -111,9 +113,17 @@ module ShippingCalc
       price = parse_response(resp.body)
     end
 
-    # Parses the server's response.
+    # Parses the server's response. Returns a hash with the carriers and
+    # their rates.
     def parse_response(xml)
-      p xml
+      quotes = { }
+      doc = Document.new(xml)
+      q = doc.elements.each("*/CARRIER") do |e| 
+        name = e.elements["CARRIERNAME"].text
+        rate = e.elements["RATE"].text
+        quotes[name] = rate
+      end
+      quotes
     end
 
     # Create a shipment item based on the weight, dimension and description.
@@ -131,7 +141,7 @@ module ShippingCalc
       dimensions = Element.new("DIMENSIONS")
       d = dim.split("x")
       l = Element.new("LENGTH")
-      w = Element.new("WIDHT")
+      w = Element.new("WIDTH")
       h = Element.new("HEIGHT")
       l.text = d[0]
       w.text = d[1]
@@ -141,6 +151,10 @@ module ShippingCalc
       dimensions << w
       dimensions << h
       shipment << dimensions
+
+      pieces = Element.new("PIECES")
+      pieces.text= "1"
+      shipment << pieces
 
       shipment
     end

@@ -9,8 +9,8 @@ class FreightQuoteTest < Test::Unit::TestCase
     @opts = { 
       :api_email => "xmltest@FreightQuote.com",
       :api_password => "XML",
-      :from_zip => 10001,
-      :to_zip => 10001,
+      :from_zip => 75042,
+      :to_zip => 33166,
       :weight => 150,
       :dimensions => "12x23x12"
     }
@@ -34,7 +34,7 @@ class FreightQuoteTest < Test::Unit::TestCase
 
   def test_valid_quote
     f = FreightQuote.new
-    f.quote(@opts)
-    assert true
+    quotes = f.quote(@opts)
+    assert quotes.length > 0
   end
 end

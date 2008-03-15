@@ -4,3 +4,9 @@ README.txt
 Rakefile
 lib/shipping_calc.rb
 lib/shipping_calc/dhl.rb
+lib/shipping_calc/freight_quote.rb
+test/test_helper.rb
+test/dhl/dhl_test.rb
+test/freight_quote/freight_quote_test.rb
+examples/dhl_example.rb
+examples/fq_example.rb

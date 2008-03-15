@@ -10,9 +10,13 @@ carriers (UPS, DHL, FedEX, FreightQuote).
 
 == FEATURES/PROBLEMS:
 
-- Current version only supports DHL.
+- Current version only supports DHL and FreightQuote
 
 == SYNOPSIS:
+
+You can find an example of each carrier's API under the /examples directory.
+
+A simple DHL example:
 
 	require 'rubygems'
 	require 'shipping_calc'

@@ -5,8 +5,13 @@ include ShippingCalc
 
 # This example requires you to have a .dhl_info.yml file in your home dir to
 # gather the login data. Check the Test secion in README.txt for more information.
-
-auth_info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+begin
+  auth_info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+rescue Exception
+  print "You don't have a .dhl_info.yml file in your home directory. Please
+read the \"Test\" section in README.txt.\n"
+  exit
+end
 
 api_user = auth_info["api_user"]
 api_pwd = auth_info["api_password"]

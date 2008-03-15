@@ -1,3 +1,17 @@
+=== 0.1.1
+* Usage examples for DHL and FreightQuote in the /examples directory.
+
+=== 0.1.0
+* Proper support for FreightQuote quotes.
+FreightQuote uses an API that calculates the cost for a freight shipping
+accross several carriers and returns a list of their rates. ShippingCalc will
+now be able to query them and return a hash like {carrier_name => rate} so
+you can pick whatever's more useful to you.
+
+=== 0.0.2 / 2008-03-13
+
+* Adds basic support for FreightQuote.
+
 === 0.0.1 / 2008-03-09
 
 * Initial buggy release
