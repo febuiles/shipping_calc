@@ -49,14 +49,18 @@ module ShippingCalc
     # :*from_zip*:: Sender's zip code.
     # :*to_zip*:: Recipient's zip code.
     # :*weight*:: Total weight of the order in lbs.
-    # :*dimensions*:: Length, width and height of the shipment, described as a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
+    # :*dimensions*:: Optional - Length, width and height of the shipment, described as a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
     # :*description*:: Optional - Description of the stuff that's being shipped. Defaults to "NODESC".
+    # :*class*:: Optional - Freight quote class. Defaults to nil.
+    # 
+    # *Note* Both dimensions or class are optional but one of them has to be there. If both parameters are filled then priority will be give to class.
     def quote(params)
       required_fields = [:api_email, :api_password, :to_zip, :from_zip,
-                         :weight, :dimensions]
+                         :weight]
 
       raise ShippingCalcError.new("Nil parameters for FreightQuote quote.") if params.nil?
-      raise ShippingCalcError.new("Invalid shipment dimensions") unless (params[:dimensions] =~ /\d+x\d+x\d+/)
+      raise ShippingCalcError.new("Invalid shipment dimensions") unless
+      ((params[:dimensions] =~ /\d+x\d+x\d+/) || (!params[:class].nil?))
 
       required_fields.each do |f|
         if params.has_key?(f) && !params[f].nil? # Cover all the mandatory fields
@@ -99,7 +103,8 @@ module ShippingCalc
       dest << dest_zip
       root << dest
 
-      root << shipment_item(params[:weight], params[:dimensions], params[:description])
+      root << shipment_item(params[:weight], params[:dimensions],
+      params[:description], params[:class])
       @xml << root
     end
 
@@ -127,7 +132,7 @@ module ShippingCalc
     end
 
     # Create a shipment item based on the weight, dimension and description.
-    def shipment_item(weight_, dim, desc)
+    def shipment_item(weight_, dim, desc, s_class = nil)
       raise ShippingCalcError.new("Invalid weight") if !(weight_ > 0)
       shipment = Element.new("SHIPMENT")
       weight = Element.new("WEIGHT")
@@ -138,19 +143,25 @@ module ShippingCalc
       description.text = desc
       shipment << description
 
-      dimensions = Element.new("DIMENSIONS")
-      d = dim.split("x")
-      l = Element.new("LENGTH")
-      w = Element.new("WIDTH")
-      h = Element.new("HEIGHT")
-      l.text = d[0]
-      w.text = d[1]
-      h.text = d[2]
+      if s_class.nil?
+        dimensions = Element.new("DIMENSIONS")
+        d = dim.split("x")
+        l = Element.new("LENGTH")
+        w = Element.new("WIDTH")
+        h = Element.new("HEIGHT")
+        l.text = d[0]
+        w.text = d[1]
+        h.text = d[2]
 
-      dimensions << l
-      dimensions << w
-      dimensions << h
-      shipment << dimensions
+        dimensions << l
+        dimensions << w
+        dimensions << h
+        shipment << dimensions
+      else
+        ship_class = Element.new("CLASS")
+        ship_class.text = s_class.to_s
+        shipment << ship_class
+      end
 
       pieces = Element.new("PIECES")
       pieces.text= "1"

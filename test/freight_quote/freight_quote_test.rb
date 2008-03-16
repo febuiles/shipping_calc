@@ -24,6 +24,14 @@ class FreightQuoteTest < Test::Unit::TestCase
     end
   end
 
+  def test_quote_with_class
+    @opts[:class] = 92.5
+    @opts[:dimensions] = nil
+    f = FreightQuote.new
+    q = f.quote(@opts)
+    assert q.size > 0
+  end
+
   def test_invalid_dimension
     @opts[:dimensions] = "12x3"
     f = FreightQuote.new

@@ -47,7 +47,7 @@ A simple DHL example:
 
 == INSTALL:
 
-* sudo gem install shipping_calc
+* sudo gem install shipping-calc
 
 == TEST
 

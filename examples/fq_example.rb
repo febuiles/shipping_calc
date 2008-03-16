@@ -8,8 +8,8 @@ opts = {
   :api_password => "XML",
   :from_zip => 75042,
   :to_zip => 33166,
-  :weight => 150,
-  :dimensions => "12x23x12"
+  :weight => 5,
+  :dimensions => "1x1x1"
 }
 
 f = FreightQuote.new

@@ -26,7 +26,7 @@ opts = {
   :date => Time.now,
   :service_code => "E", # check the docs to find out what this means
   :shipment_code => "P", # check the docs to find out what this means
-  :weight => 34, # weight in lbs
+  :weight => 1, # weight in lbs
   :to_zip => 10001,
   :to_state => "NY" 
 }
