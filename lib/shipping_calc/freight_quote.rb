@@ -53,7 +53,7 @@ module ShippingCalc
     # :*description*:: Optional - Description of the stuff that's being shipped. Defaults to "NODESC".
     # :*class*:: Optional - Freight quote class. Defaults to nil.
     # 
-    # *Note* Both dimensions or class are optional but one of them has to be there. If both parameters are filled then priority will be give to class.
+    # *Note* Both dimensions or class are optional but one of them has to be there. If both parameters are filled then priority will be given to class.
     def quote(params)
       required_fields = [:api_email, :api_password, :to_zip, :from_zip,
                          :weight]
