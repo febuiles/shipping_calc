@@ -1,6 +1,6 @@
+README.txt
 History.txt
 Manifest.txt
-README
 README.markdown
 Rakefile
 lib/shipping_calc.rb
