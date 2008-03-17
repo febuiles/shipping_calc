@@ -10,6 +10,7 @@ opts = {
   :to_zip => 33166,
   :weight => 5,
   :dimensions => "1x1x1"
+  :to_conditions => "BIZ_WITHOUT"
 }
 
 f = FreightQuote.new

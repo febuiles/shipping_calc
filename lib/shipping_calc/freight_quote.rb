@@ -49,28 +49,19 @@ module ShippingCalc
     # :*from_zip*:: Sender's zip code.
     # :*to_zip*:: Recipient's zip code.
     # :*weight*:: Total weight of the order in lbs.
-    # :*dimensions*:: Optional - Length, width and height of the shipment, described as a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
-    # :*description*:: Optional - Description of the stuff that's being shipped. Defaults to "NODESC".
-    # :*class*:: Optional - Freight quote class. Defaults to nil.
-    # 
+    # :*dimensions*:: _Optional_ - Length, width and height of the shipment, described as a string: "[Length]x[Width]x[Height]" (e.g. "23x32x15").
+    # :*description*:: _Optional_ - Description of the stuff that's being shipped. Defaults to "NODESC".
+    # :*class*:: _Optional_ - Freightquote's shipping class. Defaults to nil.
+    # :*from_conditions*:: _Optional_ - String that indicates if the sending location is a residence ("RES"), a business with a forklift or dock ("BIZ_WITH") or a business without a forklift or dock ("BIZ_WITHOUT"). Defaults to "RES".
+    # :*to_conditions*:: _Optional_ - String that indicates if the receiving location is a residence ("RES"), a business with a forklift or dock ("BIZ_WITH") or a business without a forklift or dock ("BIZ_WITHOUT"). Defaults to "RES".
+    # :*liftgate*:: _Optional_ - A boolean indicating if a liftgate's required at the receiving location (API page 10). Defaults to false.
+    # :*inside_delivery*:: _Optional_ - A boolean indicating if inside delivery's required at the receiving location (API page 10). Defaults to false.
     # *Note* Both dimensions or class are optional but one of them has to be there. If both parameters are filled then priority will be given to class.
     def quote(params)
-      required_fields = [:api_email, :api_password, :to_zip, :from_zip,
-                         :weight]
-
-      raise ShippingCalcError.new("Nil parameters for FreightQuote quote.") if params.nil?
-      raise ShippingCalcError.new("Invalid shipment dimensions") unless
-      ((params[:dimensions] =~ /\d+x\d+x\d+/) || (!params[:class].nil?))
-
-      required_fields.each do |f|
-        if params.has_key?(f) && !params[f].nil? # Cover all the mandatory fields
-          next
-        else
-          raise ShippingCalcError.new("Required field \"#{f}\" not found.")
-        end
-      end
-
+      validate params
       params[:description] ||= "NODESC"
+      params[:from_conditions] ||= "RES"
+      params[:to_conditions] ||= "RES"
 
       @xml = xml = Document.new
       xml << XMLDecl.new("1.0' encoding='UTF-8")
@@ -89,19 +80,9 @@ module ShippingCalc
       # We're only getting a quote, let's pretend the shipper's paying.
       root.attributes["BILLTO"] = "SHIPPER" 
 
-      origin = Element.new("ORIGIN")
-      orig_zip = Element.new("ZIPCODE")
-      orig_zip.text = params[:to_zip]
-
-      origin << orig_zip
-      root << origin
-
-      dest = Element.new("DESTINATION")
-      dest_zip = Element.new("ZIPCODE")
-      dest_zip.text = params[:from_zip]
-      
-      dest << dest_zip
-      root << dest
+      root << destination(params[:from_zip], params[:from_conditions],
+                     params[:liftgate], params[:inside_delivery]) 
+      root << origin(params[:from_zip], params[:from_conditions])
 
       root << shipment_item(params[:weight], params[:dimensions],
       params[:description], params[:class])
@@ -129,6 +110,67 @@ module ShippingCalc
         quotes[name] = rate
       end
       quotes
+    end
+
+    # TODO Merge this method with destination's.
+    def origin (zip, conditions)
+      origin = Element.new("ORIGIN")
+      orig_zip = Element.new("ZIPCODE")
+      orig_zip.text = zip
+      origin << orig_zip
+
+      case conditions
+      when "RES"
+        residence = Element.new("RESIDENCE")
+        residence.text = "TRUE"
+        origin << residence
+      when "BIZ_WITH"
+        dock = Element.new("LOADINGDOCK")
+        dock.text = "TRUE"
+        origin << dock
+      when "BIZ_WITHOUT"
+        dock = Element.new("LOADINGDOCK")
+        dock.text = "FALSE"
+        origin << dock
+      end
+
+      origin
+    end
+
+    def destination(zip, conditions, liftgate, inside)
+      dest = Element.new("DESTINATION")
+      dest_zip = Element.new("ZIPCODE")
+      dest_zip.text = zip
+      dest << dest_zip
+
+      case conditions
+      when "RES"
+        residence = Element.new("RESIDENCE")
+        residence.text = "TRUE"
+        dest << residence
+      when "BIZ_WITH"
+        dock = Element.new("LOADINGDOCK")
+        dock.text = "TRUE"
+        dest << dock
+      when "BIZ_WITHOUT"
+        dock = Element.new("LOADINGDOCK")
+        dock.text = "FALSE"
+        dest << dock
+      end
+
+      if !liftgate.nil? && liftgate
+        liftgate = Element.new("LIFTGATEDELIVERY")
+        liftgate.text = "TRUE"
+        dest << liftgate
+      end
+      
+      if !inside.nil? && inside
+        inside = Element.new("INSIDEDELIVERY")
+        inside.text = "TRUE"
+        dest << inside
+      end
+
+      dest
     end
 
     # Create a shipment item based on the weight, dimension and description.
@@ -168,6 +210,43 @@ module ShippingCalc
       shipment << pieces
 
       shipment
+    end
+
+    def validate(params)
+      required_fields = [:api_email, :api_password, :to_zip, :from_zip,
+                         :weight]
+
+      raise ShippingCalcError.new("Nil parameters for FreightQuote quote.") if params.nil?
+      raise ShippingCalcError.new("Invalid shipment dimensions") unless
+        ((params[:dimensions] =~ /\d+x\d+x\d+/) || (!params[:class].nil?))
+
+      raise ShippingCalcError.new("Invalid receiving conditions") unless
+        valid_conditions(params[:to_conditions]) 
+      raise ShippingCalcError.new("Invalid shipping conditions") unless
+        valid_conditions(params[:from_conditions]) 
+
+      if !(params[:liftgate].nil?)
+        raise ShippingCalcError.new("Invalid liftgate option, only boolean values.") unless
+          (params[:liftgate].class == TrueClass || params[:liftgate].class == FalseClass)
+      end
+
+      if !(params[:inside_delivery].nil?)
+        raise ShippingCalcError.new("Invalid inside delivery option, only boolean values.") unless
+          (params[:inside_delivery].class == TrueClass || params[:inside_delivery].class == FalseClass)
+      end
+
+      required_fields.each do |f|
+        if params.has_key?(f) && !params[f].nil? # Cover all the mandatory fields
+          next
+        else
+          raise ShippingCalcError.new("Required field \"#{f}\" not found.")
+        end
+      end
+
+    end
+
+    def valid_conditions(cond)
+      cond.nil? || ((cond =~ /^(BIZ_WITH|RES|BIZ_WITHOUT)$/) == 0)
     end
   end
 end

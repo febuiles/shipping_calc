@@ -1,6 +1,7 @@
 History.txt
 Manifest.txt
-README.txt
+README
+README.markdown
 Rakefile
 lib/shipping_calc.rb
 lib/shipping_calc/dhl.rb
