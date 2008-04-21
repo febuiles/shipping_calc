@@ -6,6 +6,7 @@ include ShippingCalc
 class FreightQuoteTest < Test::Unit::TestCase
 
   def setup
+
     @opts = { 
       :api_email => "xmltest@FreightQuote.com",
       :api_password => "XML",

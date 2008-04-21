@@ -32,7 +32,7 @@ require 'shipping_calc/freight_quote'
 module ShippingCalc
   class ShippingCalcError < StandardError
   end
-  VERSION = "0.1.3"
+  VERSION = "0.1.5"
 
   US_STATES = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC',
                'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN',

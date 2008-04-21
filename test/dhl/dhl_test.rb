@@ -29,7 +29,7 @@ class DHLTest < Test::Unit::TestCase
   end
 
   def test_quote
-    assert_in_delta "172.5", @d.quote(@opts), 5
+    assert_in_delta "172.5", @d.quote(@opts), 10
   end
 
   def test_params_empty

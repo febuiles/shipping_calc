@@ -1,3 +1,12 @@
+=== 0.1.5 / 2008-04-20
+
+* DHL quotes now throw an exception if the DHL's sytem is online (like it is
+  right now!).
+
+=== 0.1.4 / 2008-04-12
+
+* Fixed some tests and documentation
+
 === 0.1.3 / 2008-03-17
 
 * FreightQuote support improved

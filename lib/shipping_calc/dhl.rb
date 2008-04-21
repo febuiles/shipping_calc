@@ -174,7 +174,12 @@ module ShippingCalc
     # Parses the server's response. Currently, it only returns the estimate
     # value of the shipping.
     def parse_response(resp)
+      p resp
       doc = Document.new(resp)
+      if resp =~ /Fault/
+        raise ShippingCalcError.new("DHL's system is currently offline.")
+        return
+      end
       result =  doc.elements["//Shipment/Result/Desc"].text 
       
       if result == "Shipment estimate successful."

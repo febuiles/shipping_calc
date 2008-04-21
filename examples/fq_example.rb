@@ -9,7 +9,7 @@ opts = {
   :from_zip => 75042,
   :to_zip => 33166,
   :weight => 5,
-  :dimensions => "1x1x1"
+  :dimensions => "1x1x1",
   :to_conditions => "BIZ_WITHOUT"
 }
 
