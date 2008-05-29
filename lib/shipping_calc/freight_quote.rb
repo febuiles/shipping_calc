@@ -63,8 +63,8 @@ module ShippingCalc
       params[:from_conditions] ||= "RES"
       params[:to_conditions] ||= "RES"
 
-      @xml = xml = Document.new
-      xml << XMLDecl.new("1.0' encoding='UTF-8")
+      @xml = Document.new
+##      @xml << XMLDecl.new("1.0' encoding='UTF-8")
       rate_estimate(params)
       request
     end
@@ -80,7 +80,7 @@ module ShippingCalc
       # We're only getting a quote, let's pretend the shipper's paying.
       root.attributes["BILLTO"] = "SHIPPER" 
 
-      root << destination(params[:from_zip], params[:from_conditions],
+      root << destination(params[:to_zip], params[:to_conditions],
                      params[:liftgate], params[:inside_delivery]) 
       root << origin(params[:from_zip], params[:from_conditions])
 

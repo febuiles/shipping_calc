@@ -1,3 +1,8 @@
+=== 0.1.6 / 2008-05-29
+
+* Fixed a bug in FreightQuote where the origin and destination zip code would
+  some times be the same.
+
 === 0.1.5 / 2008-04-20
 
 * DHL quotes now throw an exception if the DHL's sytem is online (like it is
