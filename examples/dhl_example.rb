@@ -1,12 +1,18 @@
 require 'rubygems'
 require 'shipping_calc'
 require 'yaml'
+require 'rbconfig'
 include ShippingCalc
 
 # This example requires you to have a .dhl_info.yml file in your home dir to
 # gather the login data. Check the Test secion in README.txt for more information.
 begin
-  auth_info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+  os = Config::CONFIG["host_os"]
+  if os =~ /darwin/
+    auth_info = YAML.load_file("/Users/#{ENV["USER"]}/.dhl_info.yml")
+    else      
+    auth_info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+  end
 rescue Exception
   print "You don't have a .dhl_info.yml file in your home directory. Please
 read the \"Test\" section in README.txt.\n"
