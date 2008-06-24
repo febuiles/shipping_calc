@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../../lib/shipping_calc"
 require 'yaml'
 
 include ShippingCalc

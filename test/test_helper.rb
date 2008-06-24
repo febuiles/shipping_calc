@@ -1,5 +1,2 @@
 require 'test/unit'
-require 'shipping_calc'
-
-require 'dhl/dhl_test'
-require 'freight_quote/freight_quote_test'
+require File.dirname(__FILE__) + "/../lib/shipping_calc"
