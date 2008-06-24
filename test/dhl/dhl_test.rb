@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../../lib/shipping_calc"
 require 'yaml'
+require 'rbconfig'
 
 include ShippingCalc
 
@@ -29,39 +31,59 @@ class DHLTest < Test::Unit::TestCase
   end
 
   def test_quote
-    assert_in_delta "172.5", @d.quote(@opts), 10
+    assert_in_delta "172.5", @d.quote(@opts), 45
+  end
+
+  def test_errors
+    @opts[:account_num] = "0123456789"
+    assert_raises ShippingCalcError do
+      @d.quote(@opts)
+    end
   end
 
   def test_params_empty
-    assert_raise NoMethodError do 
+    assert_raises ShippingCalcError do 
       @d.quote(nil)
+    end
+  end
+
+  def test_empty_date
+    @opts[:date] = nil
+    assert_nothing_raised do
+      quote = @d.quote(@opts)
     end
   end
 
   def test_not_enough_params
     @opts.delete(:weight)
-    assert_raise ShippingCalcError do 
+    assert_raises ShippingCalcError do 
       @d.quote(@opts)
     end
   end
 
   def test_invalid_weight
     @opts[:weight] = -1
-    assert_raise ShippingCalcError do 
+    assert_raises ShippingCalcError do 
       @d.quote(@opts)
     end
   end
 
   def test_invalid_zip_code
     @opts[:to_zip] = "10002"
-    assert_raise ShippingCalcError do
+    assert_raises ShippingCalcError do
       @d.quote(@opts)
     end
   end
 
   # Auth info is private, gotta load it this way.
   def auth_info_from_file
-    info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+    os = Config::CONFIG["host_os"]
+    if os =~ /darwin/
+      info = YAML.load_file("/Users/#{ENV["USER"]}/.dhl_info.yml")
+    else      
+      info = YAML.load_file("/home/#{ENV["USER"]}/.dhl_info.yml")
+    end
+    info
   end
 
 end
