@@ -1,5 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + "/../../lib/shipping_calc"
+
+require 'test/unit'
 require 'yaml'
 require 'rbconfig'
 
@@ -36,13 +37,13 @@ class DHLTest < Test::Unit::TestCase
 
   def test_errors
     @opts[:account_num] = "0123456789"
-    assert_raises ShippingCalcError do
+    assert_raises ShippingCalc::ShippingCalcError do
       @d.quote(@opts)
     end
   end
 
   def test_params_empty
-    assert_raises ShippingCalcError do 
+    assert_raises ShippingCalc::ShippingCalcError do 
       @d.quote(nil)
     end
   end
@@ -56,21 +57,21 @@ class DHLTest < Test::Unit::TestCase
 
   def test_not_enough_params
     @opts.delete(:weight)
-    assert_raises ShippingCalcError do 
+    assert_raises ShippingCalc::ShippingCalcError do 
       @d.quote(@opts)
     end
   end
 
   def test_invalid_weight
     @opts[:weight] = -1
-    assert_raises ShippingCalcError do 
+    assert_raises ShippingCalc::ShippingCalcError do 
       @d.quote(@opts)
     end
   end
 
   def test_invalid_zip_code
     @opts[:to_zip] = "10002"
-    assert_raises ShippingCalcError do
+    assert_raises ShippingCalc::ShippingCalcError do
       @d.quote(@opts)
     end
   end

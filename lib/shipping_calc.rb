@@ -22,14 +22,22 @@
 $:.unshift(File.dirname(__FILE__))
 
 require 'rubygems'
-require 'shipping_calc/dhl'
-require 'shipping_calc/freight_quote'
+require File.dirname(__FILE__) + "/shipping_calc/dhl"
+require File.dirname(__FILE__) + "/shipping_calc/freight_quote"
 module ShippingCalc
 
-  VERSION ||= "0.1.7" 
+  VERSION = "0.1.7" 
+
+  US_STATES =  ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC',
+               'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN',
+               'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN',
+               'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ',
+               'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI',
+               'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA',
+               'WI', 'WV'] 
+
 
   class ShippingCalcError < StandardError
   end
-
 
 end
