@@ -7,8 +7,8 @@ ShippingCalc
 DESCRIPTION:
 -----------
 
-Shipping Calculator written in Ruby to get quick quotes from the major
-carriers (UPS, DHL, FedEX, FreightQuote).
+Shipping Calculator written in Ruby to get quick quotes from DHL and Freight Carriers.
+We hope to support FedEx and UPS in a near future.	
 
 FEATURES/PROBLEMS:
 -----------------
@@ -30,22 +30,21 @@ A simple DHL example:
 	  :api_password => "your_pwd",
 	  :shipping_key => "your_key",
 	  :account_num => "your_accnt",
-	  :date => Time.now, # or something...
-	  :service_code => "E", # check the docs to find out what this means
-	  :shipment_code => "P", # check the docs to find out what this means
+	  :date => Time.now, 
+	  :service_code => "E", # check the DHL docs to find out what this means
+	  :shipment_code => "P", # check the DHL docs to find out what this means
 	  :weight => 34, # weight in lbs
 	  :to_zip => 10001,
 	  :to_state => "NY"
 	}
 
 	d = DHL.new
-	a = d.quote(opts)
-	p a
+	q = d.quote(opts)
+	puts q
 
 REQUIREMENTS:
 ---------------
 * You must obtain all the DHL ShipIt data (user, password, key and account) from http://www.dhl-usa.com/TechTools/detail/TTDetail.asp?nav=TechnologyTools/Shipping/OwnSoln
-* REXML
 
 INSTALL:
 -------

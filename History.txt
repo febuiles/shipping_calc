@@ -1,3 +1,10 @@
+=== 0.1.7 / 2008-06-24
+
+Improvements for DHL:
+  * Calculations now handle and print descriptive errors when a quote fails.
+  * Fixed a bug with the default ship date not being set
+  * Tests should now un in Mac OS X.
+
 === 0.1.6 / 2008-05-29
 
 * Fixed a bug in FreightQuote where the origin and destination zip code would
