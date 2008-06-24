@@ -230,7 +230,6 @@ module ShippingCalc
     # Parses the server's response. Currently, it only returns the estimate
     # value of the shipping.
     def parse_response(resp)
-#      p resp
       doc = Document.new(resp)
 
       find_error_and_raise(doc) if errors_exist?(doc)
