@@ -1,21 +1,19 @@
-ShippingCalc
-============
+= ShippingCalc
 
 * http://github.com/febuiles/shipping_calc/
 * mailto:federico.builes@gmail.com
 
-DESCRIPTION:
------------
+== DESCRIPTION:
 
 Shipping Calculator written in Ruby to get quick quotes from DHL and Freight Carriers.
 We hope to support FedEx and UPS in a near future.	
 
-FEATURES/PROBLEMS:
------------------
+== FEATURES/PROBLEMS:
+
 - Current version only supports DHL and FreightQuote
 
-SYNOPSIS:
---------
+== SYNOPSIS:
+
 You can find an example of each carrier's API under the /examples directory.
 
 A simple DHL example:
@@ -42,16 +40,16 @@ A simple DHL example:
 	q = d.quote(opts)
 	puts q
 
-REQUIREMENTS:
----------------
+== REQUIREMENTS:
+
 * You must obtain all the DHL ShipIt data (user, password, key and account) from http://www.dhl-usa.com/TechTools/detail/TTDetail.asp?nav=TechnologyTools/Shipping/OwnSoln
 
-INSTALL:
--------
+== INSTALL:
+
 * sudo gem install shipping-calc
 
-TEST:
------
+== TEST:
+
 To run the DHL tests you'll need to have a .dhl_info.yml file in your home directory with your auth info like this: 
     ~/.dhl_info.yml
 
@@ -63,8 +61,8 @@ To run the DHL tests you'll need to have a .dhl_info.yml file in your home direc
 This is necessary only for the tests and it'll be ignored for the actual
 usage of the the library. 
 
-LICENSE:
--------
+== LICENSE:
+
 Copyright (c) 2008 Federico Builes
 
 Permission is hereby granted, free of charge, to any person obtaining
