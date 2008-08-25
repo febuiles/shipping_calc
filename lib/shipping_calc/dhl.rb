@@ -51,8 +51,8 @@ module ShippingCalc
     # :*to_state*:: Recipient's state.
 
     def quote(params)
-      @xml = xml = Document.new
-      xml << XMLDecl.new("1.0' encoding='UTF-8")
+      @xml = Document.new
+      @xml << XMLDecl.new("1.0' encoding='UTF-8")
       raise ShippingCalcError.new("Invalid parameters") if params.nil?
       raise ShippingCalcError.new("Missing shipping parameters") unless params.keys.length == 10
       auth(params[:api_user], params[:api_password])
@@ -211,7 +211,7 @@ module ShippingCalc
     # Sends the request to the web server and returns the response.
     def request
       server = Net::HTTP.new("eCommerce.airborne.com", 443)
-      path = path = "/ApiLandingTest.asp"
+      path = "/ApiLandingTest.asp"
       data = @xml.to_s
       headers = { "Content-Type" => "text/xml"}
       server.use_ssl = true
